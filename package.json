@@ -1,0 +1,29 @@
+{
+	"name": "@affinity-lab/sapphire-backend",
+	"version": "0.0.1",
+	"author": "Affinity Lab",
+	"main": "dist/index",
+	"scripts": {
+		"build": "npx tsc && npm version patch --no-git-tag-version",
+		"prebuild": "rimraf ./dist"
+	},
+	"files": [
+		"./**/*"
+	],
+	"dependencies": {
+		"@affinity-lab/affinity-util": "github:affinity-lab/affinity-util",
+		"@affinity-lab/blitz": "github:affinity-lab/blitz",
+		"@affinity-lab/x-com": "github:affinity-lab/x-com",
+		"drizzle-orm": "^0.29.0",
+		"express": "^4.18.2",
+		"glob": "^10.3.10",
+		"mysql2": "^3.6.3",
+		"sharp": "^0.32.5"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.21",
+		"@types/node": "^18.18.9",
+		"rimraf": "^5.0.5",
+		"typescript": "^5.2.2"
+	}
+}
