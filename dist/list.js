@@ -5,22 +5,13 @@ const drizzle_orm_1 = require("drizzle-orm");
 class IList {
     schema;
     db;
-    quickSearch;
-    defaultFilters;
-    orders = {};
-    constructor(schema, db, quickSearch, defaultFilters) {
+    quickSearchFields;
+    constructor(schema, db, quickSearchFields) {
         this.schema = schema;
         this.db = db;
-        this.quickSearch = quickSearch;
-        this.defaultFilters = defaultFilters;
-        if (typeof this.defaultFilters === "undefined")
-            this.defaultFilters = [];
-        else if (!Array.isArray(this.defaultFilters))
-            this.defaultFilters = [this.defaultFilters];
-        this.orderConst();
+        this.quickSearchFields = quickSearchFields;
     }
     export(item) { return item; }
-    orderConst() { }
     async page(reqPageIndex, pageSize, search, order, filter) {
         let w = this.where(search, filter);
         let c = await this.count(w);
@@ -28,8 +19,7 @@ class IList {
         let q = this.db.select()
             .from(this.schema)
             .where(w);
-        if (order)
-            q = this.orderBy(q, order);
+        q = this.orderBy(q, order);
         if (pageSize)
             q = this.pagination(q, pageIndex, pageSize);
         const res = await q.execute();
@@ -43,11 +33,22 @@ class IList {
         return base.limit(pageSize).offset(pageIndex * pageSize);
     }
     where(search, filter) {
-        let f = this.composeFilters(filter);
-        return f ? (this.quickSearch ? (0, drizzle_orm_1.and)(f, this.search(search)) : f.getSQL()) : (this.quickSearch ? this.search(search) : undefined);
+        const f = [this.defaultFilter(), this.composeFilter(filter), this.quickSearchFilter(search)].filter(filters => !!filters);
+        return (0, drizzle_orm_1.and)(...f);
     }
-    composeFilters(args) {
+    defaultFilter() {
         return undefined;
+    }
+    composeFilter(args) {
+        return undefined;
+    }
+    quickSearchFilter(key) {
+        if (typeof key === "undefined" || key.trim().length === 0)
+            return (0, drizzle_orm_1.or)();
+        let likes = [];
+        for (let col of Array.isArray(this.quickSearchFields) ? this.quickSearchFields : [this.quickSearchFields])
+            likes.push((0, drizzle_orm_1.like)(col, `%${key}%`));
+        return (0, drizzle_orm_1.or)(...likes);
     }
     calcPageIndex(pageIndex, pageSize, count) {
         if (pageIndex < 0)
@@ -64,30 +65,17 @@ class IList {
             .where(where).prepare();
         return (await q.execute())[0].amount;
     }
-    search(key) {
-        console.log(key, typeof key.trim);
-        if (typeof key === "undefined" || key.trim().length === 0)
-            return (0, drizzle_orm_1.or)();
-        let likes = [];
-        for (let col of Array.isArray(this.quickSearch) ? this.quickSearch : [this.quickSearch])
-            likes.push((0, drizzle_orm_1.like)(col, `%${key}%`));
-        return (0, drizzle_orm_1.or)(...likes);
-    }
     orderBy(base, name) {
-        if (!Object.keys(this.orders).includes(name))
+        if (!name)
+            name = Object.keys(this.orders)[0];
+        if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name))
             return null;
         let orderSQLs = [];
         for (let o of this.orders[name])
             orderSQLs.push(o.reverse ? (0, drizzle_orm_1.desc)(o.by) : (0, drizzle_orm_1.asc)(o.by));
         return base.orderBy(...orderSQLs);
     }
-    addOrder(oORn, by, reverse) {
-        if (typeof oORn === "string" && by)
-            this.orders[oORn] = [{ by, reverse }];
-        if (typeof oORn === "object")
-            for (let order of Object.keys(oORn))
-                this.orders[order] = oORn[order];
-    }
+    get orders() { return {}; }
 }
 exports.IList = IList;
 //# sourceMappingURL=list.js.map
