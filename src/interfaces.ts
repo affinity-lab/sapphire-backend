@@ -1,7 +1,7 @@
 import {Request} from "express";
 
 export interface ContextResolver {
-	resolver(req: Request): Promise<any>;
+	resolve(req: Request): Promise<any>;
 }
 
 export interface AuthResolver<U> {
