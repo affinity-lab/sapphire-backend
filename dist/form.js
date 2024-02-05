@@ -31,7 +31,15 @@ class IForm {
         }
         return id ? this.update(id, values) : this.insert(values);
     }
-    async import(id, values) { return values; }
+    async import(id, values) {
+        for (let key of Object.keys(this.schema)) {
+            let field = this.schema[key];
+            if (field.dataType === 'date') {
+                values[field.name] = new Date(values[field.name]);
+            }
+        }
+        return values;
+    }
     async export(item) { return item; }
     async insert(values) {
         return await this.repository.insert(values);

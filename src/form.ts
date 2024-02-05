@@ -1,6 +1,6 @@
 import {MySqlTableWithColumns} from "drizzle-orm/mysql-core";
 import {Collection, MySqlRepository} from "@affinity-lab/blitz";
-import {getTableName} from "drizzle-orm";
+import {Column, getTableName} from "drizzle-orm";
 import Path from "path";
 import {ZodObject} from "zod";
 import {ExtendedError, TmpFile} from "@affinity-lab/affinity-util";
@@ -28,7 +28,15 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		}
 		return id ? this.update(id, values) : this.insert(values);
 	}
-	protected async import(id : number | null, values: Record<string, any>) {return values;}
+	protected async import(id : number | null, values: Record<string, any>) {
+		for (let key of Object.keys(this.schema)) {
+			let field = this.schema[key] as Column
+			if (field.dataType === 'date') {
+				values[field.name] = new Date(values[field.name])
+			}
+		}
+		return values;
+	}
 	protected async export(item: any) {return item;}
 	protected abstract newItem(): Promise<{type: string, data: Partial<I> & Record<string, any>}>;
 	public async insert(values: Record<string, any>): Promise<number | undefined> {
