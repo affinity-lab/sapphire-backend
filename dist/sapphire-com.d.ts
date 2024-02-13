@@ -35,6 +35,7 @@ export declare class SapphireCom {
     }>;
     form(args: {
         id: string | null;
+        values?: Record<string, any>;
     }, req: Request): Promise<Record<string, any>>;
     save(args: {
         id: number | null;

@@ -33,10 +33,10 @@ export class SapphireCom {
 	}
 
 	@Command()
-	async form(args: {id: string | null}, req: Request) {
+	async form(args: {id: string | null, values?: Record<string, any>}, req: Request) {
 		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN");
 		let id = args.id ? parseInt(args.id): null
-		return this.formAdapter.form(id);
+		return this.formAdapter.form(id, args.values);
 	}
 
 	@Command()

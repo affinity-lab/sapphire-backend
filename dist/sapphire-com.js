@@ -44,7 +44,7 @@ class SapphireCom {
         if (!(await this.authResolver.hasRole(req, this.getRole("read"))))
             throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN");
         let id = args.id ? parseInt(args.id) : null;
-        return this.formAdapter.form(id);
+        return this.formAdapter.form(id, args.values);
     }
     async save(args, req) {
         if (typeof args.id === null)

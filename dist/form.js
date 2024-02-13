@@ -18,8 +18,8 @@ class IForm {
         this.validator = validator;
         this.type = (0, drizzle_orm_1.getTableName)(this.schema);
     }
-    async getItem(id) {
-        return id ? await this.export(this.repository.get(id)) : await this.newItem();
+    async getItem(id, values) {
+        return id ? await this.export(this.repository.get(id)) : await this.newItem(values);
     }
     async saveItem(id, values) {
         values = await this.import(id, values);
@@ -48,8 +48,8 @@ class IForm {
         await this.repository.update(id, values);
         return id;
     }
-    async form(id) {
-        let item = await this.getItem(id);
+    async form(id, values) {
+        let item = await this.getItem(id, values);
         if (item === undefined)
             throw new affinity_util_1.ExtendedError("Bad ID", "");
         return item;

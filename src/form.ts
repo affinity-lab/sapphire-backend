@@ -15,8 +15,8 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		this.type = getTableName(this.schema);
 	}
 
-	public async getItem(id: number | null): Promise<Record<string, any> | undefined> {
-		return id ? await this.export(this.repository.get(id)) : await this.newItem() ;
+	public async getItem(id: number | null, values?: Record<string, any>): Promise<Record<string, any> | undefined> {
+		return id ? await this.export(this.repository.get(id)) : await this.newItem(values) ;
 	}
 
 	protected async saveItem(id: number | null, values: Record<string, any>) {
@@ -38,7 +38,7 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		return values;
 	}
 	protected async export(item: any) {return item;}
-	protected abstract newItem(): Promise<{type: string, data: Partial<I> & Record<string, any>}>;
+	protected abstract newItem(values?: Record<string, any>): Promise<{type: string, data: Partial<I> & Record<string, any>}>;
 	public async insert(values: Record<string, any>): Promise<number | undefined> {
 		return await this.repository.insert(values);
 	}
@@ -47,8 +47,8 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		return id;
 	}
 
-	async form(id: number | null) {
-		let item = await this.getItem(id);
+	async form(id: number | null, values?: Record<string, any>) {
+		let item = await this.getItem(id, values);
 		if (item === undefined) throw new ExtendedError("Bad ID", "");
 		return item;
 	}
@@ -114,5 +114,6 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		await collection.setPosition(id, fileName, position);
 		return "done";
 	}
+
 
 }
