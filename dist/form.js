@@ -32,12 +32,9 @@ class IForm {
         return id ? this.update(id, values) : this.insert(values);
     }
     async import(id, values) {
-        for (let key of Object.keys(this.schema)) {
-            let field = this.schema[key];
-            if (field.dataType === 'date') {
-                values[field.name] = new Date(values[field.name]);
-            }
-        }
+        for (let key of Object.keys(this.schema))
+            if (this.schema[key].dataType === 'date' && values[key] && values[key] !== null)
+                values[key] = new Date(values[key]);
         return values;
     }
     async export(item) { return item; }

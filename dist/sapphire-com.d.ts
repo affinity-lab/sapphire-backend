@@ -27,7 +27,9 @@ export declare class SapphireCom {
         filter?: Array<string>;
     }, req: Request): Promise<{
         items: {
-            data: any;
+            data: {
+                [x: string]: any;
+            };
             type: any;
         }[];
         page: number;

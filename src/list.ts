@@ -3,6 +3,7 @@ import {MySqlRepository} from "@affinity-lab/blitz";
 import {MySql2Database} from "drizzle-orm/mysql2";
 import {and, asc, desc, getTableName, like, or, sql, SQL, SQLWrapper} from "drizzle-orm";
 import {AnyMySqlSelectQueryBuilder} from "drizzle-orm/mysql-core/query-builders/select.types";
+import {GetSelectTableSelection, SelectResultField} from "drizzle-orm/query-builders/select.types";
 
 type Order = {by: MySqlColumn, reverse: boolean | undefined};
 type Orders = Record<string, Array<Order>>;
@@ -17,7 +18,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		protected quickSearchFields?: Search
 	) {}
 
-	protected export(item: any) {return item}
+	protected export(item: {[K in keyof {[Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>}]: {[Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>}[K]}) {return item}
 
 	public async page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>) {
 		let w = this.where(search, filter)
