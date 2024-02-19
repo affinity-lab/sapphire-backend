@@ -28,57 +28,57 @@ export class SapphireCom {
 
 	@Command()
 	async list(args: {reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Array<string>}, req: Request) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read list", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read list", "FORBIDDEN", undefined, 403);
 		return this.listAdapter.page(args.reqPageIndex, args.pageSize, args.search, args.order, args.filter);
 	}
 
 	@Command()
 	async form(args: {id: string | null, values?: Record<string, any>}, req: Request) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN", undefined, 403);
 		let id = args.id ? parseInt(args.id): null
 		return this.formAdapter.form(id, args.values);
 	}
 
 	@Command()
 	async save(args: {id: number | null, values: Record<string, any>}, req: Request) {
-		if(typeof args.id === null) if(!(await this.authResolver.hasRole(req, this.getRole("create")))) throw new ExtendedError("UNAUTHORIZED to create from", "FORBIDDEN");
-		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to update from", "FORBIDDEN");
+		if(typeof args.id === null) if(!(await this.authResolver.hasRole(req, this.getRole("create")))) throw new ExtendedError("UNAUTHORIZED to create from", "FORBIDDEN", undefined, 403);
+		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to update from", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.save(args.id, args.values);
 	}
 
 	@Command()
 	async delete(args: {id: number}, req: Request): Promise<void> {
-		if(!(await this.authResolver.hasRole(req, this.getRole("delete")))) throw new ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("delete")))) throw new ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.delete(args.id);
 	}
 
 	@Command()
 	async file(args: {id: string, collectionName: string}, req: Request, {files}: Files) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to upload file", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to upload file", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.file(parseInt(args.id), args.collectionName, files.map(f=>this.tmpFile(f)))
 	}
 
 	@Command()
 	async collection(args: {id: string}, req: Request): Promise<any[]> {
-		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read collection info", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read collection info", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.collection(parseInt(args.id));
 	}
 
 	@Command()
 	async changeFileData(args: {id: string, collectionName: string, fileName: string, newMetaData?: Record<string, any>, newName?: string}, req: Request) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to change file data", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to change file data", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.changeFileData(parseInt(args.id), args.collectionName, args.fileName, args.newMetaData, args.newName);
 	}
 
 	@Command()
 	async deleteFile(args: {id: string, collectionName: string, fileName: string}, req: Request) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("delete")))) throw new ExtendedError("UNAUTHORIZED to delete file", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("delete")))) throw new ExtendedError("UNAUTHORIZED to delete file", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.deleteFile(parseInt(args.id), args.collectionName, args.fileName);
 	}
 
 	@Command()
 	async changeFileOrder(args: {id: string, collectionName: string, fileName: string, position: string}, req: Request) {
-		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to change file order", "FORBIDDEN");
+		if(!(await this.authResolver.hasRole(req, this.getRole("update")))) throw new ExtendedError("UNAUTHORIZED to change file order", "FORBIDDEN", undefined, 403);
 		return this.formAdapter.changeFileOrder(parseInt(args.id), args.collectionName, args.fileName, parseInt(args.position));
 	}
 }

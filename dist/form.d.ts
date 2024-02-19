@@ -19,11 +19,7 @@ export declare abstract class IForm<I extends MySqlTableWithColumns<any> = any> 
     getItem(id: number | null, values?: Record<string, any>): Promise<Record<string, any> | undefined>;
     protected saveItem(id: number | null, values: Record<string, any>): Promise<number | undefined>;
     protected import(id: number | null, values: Record<string, any>): Promise<Record<string, any>>;
-    protected export(item: {
-        [p: string]: any;
-    } | undefined): Promise<{
-        [p: string]: any;
-    } | undefined>;
+    protected export(item: any): Promise<any>;
     protected abstract newItem(values?: Record<string, any>): Promise<{
         type: string;
         data: Partial<I> & Record<string, any>;

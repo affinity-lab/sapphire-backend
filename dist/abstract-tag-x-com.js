@@ -20,7 +20,7 @@ class AbstractTagXCom {
     }
     async modify(args) {
         if (args.name === undefined || args.newName === undefined)
-            throw new affinity_util_1.ExtendedError("Gimmi names man", "");
+            throw new affinity_util_1.ExtendedError("Gimmi names man", "", undefined, 400);
         if (args.name.trim() !== args.newName.trim())
             await this.repository.renameTag(args.name, args.newName);
         if (args.predefined !== undefined)

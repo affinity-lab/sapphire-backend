@@ -37,51 +37,51 @@ class SapphireCom {
     }
     async list(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("read"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read list", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read list", "FORBIDDEN", undefined, 403);
         return this.listAdapter.page(args.reqPageIndex, args.pageSize, args.search, args.order, args.filter);
     }
     async form(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("read"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read from", "FORBIDDEN", undefined, 403);
         let id = args.id ? parseInt(args.id) : null;
         return this.formAdapter.form(id, args.values);
     }
     async save(args, req) {
         if (typeof args.id === null)
             if (!(await this.authResolver.hasRole(req, this.getRole("create"))))
-                throw new affinity_util_1.ExtendedError("UNAUTHORIZED to create from", "FORBIDDEN");
+                throw new affinity_util_1.ExtendedError("UNAUTHORIZED to create from", "FORBIDDEN", undefined, 403);
         if (!(await this.authResolver.hasRole(req, this.getRole("update"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to update from", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to update from", "FORBIDDEN", undefined, 403);
         return this.formAdapter.save(args.id, args.values);
     }
     async delete(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("delete"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN", undefined, 403);
         return this.formAdapter.delete(args.id);
     }
     async file(args, req, { files }) {
         if (!(await this.authResolver.hasRole(req, this.getRole("update"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to upload file", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to upload file", "FORBIDDEN", undefined, 403);
         return this.formAdapter.file(parseInt(args.id), args.collectionName, files.map(f => this.tmpFile(f)));
     }
     async collection(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("read"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read collection info", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to read collection info", "FORBIDDEN", undefined, 403);
         return this.formAdapter.collection(parseInt(args.id));
     }
     async changeFileData(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("update"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to change file data", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to change file data", "FORBIDDEN", undefined, 403);
         return this.formAdapter.changeFileData(parseInt(args.id), args.collectionName, args.fileName, args.newMetaData, args.newName);
     }
     async deleteFile(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("delete"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to delete file", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to delete file", "FORBIDDEN", undefined, 403);
         return this.formAdapter.deleteFile(parseInt(args.id), args.collectionName, args.fileName);
     }
     async changeFileOrder(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("update"))))
-            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to change file order", "FORBIDDEN");
+            throw new affinity_util_1.ExtendedError("UNAUTHORIZED to change file order", "FORBIDDEN", undefined, 403);
         return this.formAdapter.changeFileOrder(parseInt(args.id), args.collectionName, args.fileName, parseInt(args.position));
     }
 }

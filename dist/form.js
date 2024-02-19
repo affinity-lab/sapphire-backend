@@ -26,15 +26,18 @@ class IForm {
         if (this.validator) {
             const parsed = this.validator.safeParse(values);
             if (!parsed.success)
-                throw new affinity_util_1.ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues);
+                throw new affinity_util_1.ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues, 400);
             values = parsed.data;
         }
         return id ? this.update(id, values) : this.insert(values);
     }
     async import(id, values) {
-        for (let key of Object.keys(this.schema))
-            if (this.schema[key].dataType === 'date' && values[key] && values[key] !== null)
-                values[key] = new Date(values[key]);
+        for (let key of Object.keys(this.schema)) {
+            let field = this.schema[key];
+            if (field.dataType === 'date') {
+                values[field.name] = new Date(values[field.name]);
+            }
+        }
         return values;
     }
     async export(item) { return item; }

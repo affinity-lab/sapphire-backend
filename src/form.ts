@@ -23,16 +23,21 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		values = await this.import(id, values);
 		if (this.validator) {
 			const parsed = this.validator.safeParse(values)
-			if (!parsed.success) throw new ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues);
+			if (!parsed.success) throw new ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues, 400);
 			values = parsed.data
 		}
 		return id ? this.update(id, values) : this.insert(values);
 	}
 	protected async import(id : number | null, values: Record<string, any>) {
-		for (let key of Object.keys(this.schema)) if ((this.schema[key] as Column).dataType === 'date' && values[key] && values[key] !== null) values[key] = new Date(values[key]);
+		for (let key of Object.keys(this.schema)) {
+			let field = this.schema[key] as Column
+			if (field.dataType === 'date') {
+				values[field.name] = new Date(values[field.name])
+			}
+		}
 		return values;
 	}
-	protected async export(item: {[p: string]: any} | undefined) {return item;}
+	protected async export(item: any) {return item;}
 	protected abstract newItem(values?: Record<string, any>): Promise<{type: string, data: Partial<I> & Record<string, any>}>;
 	public async insert(values: Record<string, any>): Promise<number | undefined> {
 		return await this.repository.insert(values);

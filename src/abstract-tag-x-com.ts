@@ -14,7 +14,7 @@ export class AbstractTagXCom {
 
 	@Command("modify")
 	async modify(args: { name: string, newName: string, predefined?: boolean }): Promise<boolean> {
-		if (args.name === undefined || args.newName === undefined) throw new ExtendedError("Gimmi names man", "");
+		if (args.name === undefined || args.newName === undefined) throw new ExtendedError("Gimmi names man", "", undefined, 400);
 		if (args.name.trim() !== args.newName.trim()) await this.repository.renameTag(args.name, args.newName);
 		if (args.predefined !== undefined) await this.repository.changePredefinedTag(args.newName, args.predefined);
 		return true;
