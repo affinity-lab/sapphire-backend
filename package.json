@@ -1,6 +1,6 @@
 {
 	"name": "@affinity-lab/sapphire-backend",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"author": "Affinity Lab",
 	"main": "dist/index",
 	"scripts": {

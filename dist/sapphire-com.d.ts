@@ -24,12 +24,10 @@ export declare class SapphireCom {
         pageSize: number;
         search?: string;
         order?: string;
-        filter?: Array<string>;
+        filter?: Record<string, any>;
     }, req: Request): Promise<{
         items: {
-            data: {
-                [x: string]: any;
-            };
+            data: any;
             type: any;
         }[];
         page: number;

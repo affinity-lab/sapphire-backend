@@ -27,7 +27,7 @@ export class SapphireCom {
 	}
 
 	@Command()
-	async list(args: {reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Array<string>}, req: Request) {
+	async list(args: {reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>}, req: Request) {
 		if(!(await this.authResolver.hasRole(req, this.getRole("read")))) throw new ExtendedError("UNAUTHORIZED to read list", "FORBIDDEN", undefined, 403);
 		return this.listAdapter.page(args.reqPageIndex, args.pageSize, args.search, args.order, args.filter);
 	}

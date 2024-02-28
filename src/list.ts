@@ -1,39 +1,68 @@
-import {MySqlColumn, MySqlSelectWithout, MySqlTableWithColumns} from "drizzle-orm/mysql-core";
+import {MySqlColumn, MySqlJoin, MySqlSelectWithout, MySqlTableWithColumns} from "drizzle-orm/mysql-core";
 import {MySqlRepository} from "@affinity-lab/blitz";
 import {MySql2Database} from "drizzle-orm/mysql2";
 import {and, asc, desc, getTableName, like, or, sql, SQL, SQLWrapper} from "drizzle-orm";
 import {AnyMySqlSelectQueryBuilder} from "drizzle-orm/mysql-core/query-builders/select.types";
 import {GetSelectTableSelection, SelectResultField} from "drizzle-orm/query-builders/select.types";
 
-type Order = {by: MySqlColumn, reverse: boolean | undefined};
-type Orders = Record<string, Array<Order>>;
-type Search = MySqlColumn | Array<MySqlColumn> | undefined;
-type Filter = SQLWrapper | SQL | undefined;
-type BaseSelect<A extends AnyMySqlSelectQueryBuilder = any, B extends boolean = any, C extends keyof A & string = any> = MySqlSelectWithout<A, B, C>;
+type MaybeArray<T> = T | Array<T>;
+type Order = { by: MySqlColumn, reverse: boolean | undefined };
+export type Orders = Record<string, Array<Order>>;
+type SpecialSearch = { table: MySqlTableWithColumns<any>, field: string, connection: SQL }
+export type Search = MaybeArray<MySqlColumn | SpecialSearch> | undefined;
+export type Filter = SQLWrapper | SQL | undefined;
+export type BaseSelect<A extends AnyMySqlSelectQueryBuilder = any, B extends boolean = any, C extends keyof A & string = any> = MySqlSelectWithout<A, B, C>;
 
 export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<string, any> = any, R extends MySqlRepository = any, I extends MySqlTableWithColumns<any> = any> {
 	constructor(
 		protected schema: T,
 		protected db: MySql2Database<S>,
-		protected quickSearchFields?: Search
-	) {}
+		protected quickSearchFields: Search
+	) {
+	}
 
-	protected export(item: {[K in keyof {[Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>}]: {[Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>}[K]}) {return item}
+	protected export(item: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true> }]: { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true> }[K] }) {
+		return (Object.keys(item).length === Object.keys(this.schema).length) ? item : item[Object.keys(item)[0]];
+	}
 
 	public async page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>) {
 		let w = this.where(search, filter)
+		let select = this.select(w);
+		select = this.orderBy(select, order);
 		let c = await this.count(w);
 		let pageIndex = this.calcPageIndex(reqPageIndex, pageSize, c);
-		let q = this.db.select()
-			.from(this.schema)
-			.where(w)
-		q = this.orderBy(q, order);
-		if (pageSize) q = this.pagination(q, pageIndex, pageSize);
-		const res = await q.execute();
+		if (pageSize) select = this.pagination(select, pageIndex, pageSize);
+		const res = await select.execute();
 		let items = [];
 		let type = getTableName(this.schema);
-		for (let item of res) items.push({data: this.export(item), type}) ;
+		for (let item of res) items.push({data: this.export(item), type});
 		return {items, page: pageIndex, count: c}
+	}
+
+	private select(where: SQL | undefined, count: boolean = false): MySqlSelectWithout<any, any, any> {
+		let s = count ? this.db.select({amount: sql<number>`count('*')`}) : this.db.select();
+		let from = s.from(this.schema);
+		let joinedS: MySqlJoin<any, any, any, any>;
+		for (let j of this.join()) joinedS = (joinedS || from).innerJoin(j.table, j.connection);
+		return (joinedS || from).where(where);
+	}
+
+	private join() {
+		let r: Array<{ table: MySqlTableWithColumns<any>, connection: SQL }> = [];
+		if (this.quickSearchFields) (Array.isArray(this.quickSearchFields) ? this.quickSearchFields : [this.quickSearchFields])
+			.filter(i => (!(i instanceof MySqlColumn)))
+			.forEach(i => {
+				if (!r.includes({
+					table: (i as SpecialSearch).table,
+					connection: (i as SpecialSearch).connection
+				})) {
+					r.push({
+						table: (i as SpecialSearch).table,
+						connection: (i as SpecialSearch).connection
+					})
+				}
+			});
+		return r;
 	}
 
 	private pagination(base: BaseSelect, pageIndex: number, pageSize: number): BaseSelect {
@@ -41,12 +70,12 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	}
 
 	private where(search?: string, filter?: Record<string, any>): SQL | undefined {
-		const f: Array<Filter> = [this.defaultFilter(), this.composeFilter(filter), this.quickSearchFilter(search)].filter(filters=>!!filters);
+		const f: Array<Filter> = [this.defaultFilter(), this.composeFilter(filter), this.quickSearchFilter(search)].filter(filters => !!filters);
 		return and(...f);
 	}
 
 	protected defaultFilter(): Filter {
-		return undefined
+		return undefined;
 	}
 
 	protected composeFilter(args: Record<string, any> | undefined): Filter {
@@ -56,7 +85,10 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	protected quickSearchFilter(key?: string): Filter {
 		if (typeof key === "undefined" || key.trim().length === 0) return or()!;
 		let likes: Array<SQL> = [];
-		for (let col of Array.isArray(this.quickSearchFields) ? this.quickSearchFields : [this.quickSearchFields]) likes.push(like(col as MySqlColumn, `%${key}%`));
+		for (let col of Array.isArray(this.quickSearchFields) ? this.quickSearchFields : [this.quickSearchFields]) {
+			if (col instanceof MySqlColumn) likes.push(like(col as MySqlColumn, `%${key}%`));
+			else likes.push(like(col!.table[col!.field], `%${key}%`));
+		}
 		return or(...likes)!;
 	}
 
@@ -68,10 +100,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	}
 
 	private async count(where: SQL | undefined): Promise<number> {
-		let q = this.db
-			.select({amount: sql<number>`count('*')`})
-			.from(this.schema)
-			.where(where).prepare()
+		let q = this.select(where, true).prepare()
 		return (await q.execute())[0].amount
 	}
 
@@ -83,7 +112,9 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		return base.orderBy(...orderSQLs);
 	}
 
-	protected get orders(): Orders  {return {}}
+	protected get orders(): Orders {
+		return {}
+	}
 
 }
 
