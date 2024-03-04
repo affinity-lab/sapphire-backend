@@ -22,7 +22,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	}
 
 	protected export(item: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true> }]: { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true> }[K] }) {
-		return (Object.keys(item).length === Object.keys(this.schema).length) ? item : item[Object.keys(item)[0]];
+		return item;
 	}
 
 	public async page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>) {

@@ -13,7 +13,7 @@ class IList {
         this.quickSearchFields = quickSearchFields;
     }
     export(item) {
-        return (Object.keys(item).length === Object.keys(this.schema).length) ? item : item[Object.keys(item)[0]];
+        return item;
     }
     async page(reqPageIndex, pageSize, search, order, filter) {
         let w = this.where(search, filter);

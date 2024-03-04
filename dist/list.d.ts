@@ -29,10 +29,10 @@ export declare class IList<T extends MySqlTableWithColumns<any> = any, S extends
         }]: {
             [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>;
         }[K];
-    }): { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[K]; } | { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[string];
+    }): { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[K]; };
     page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>): Promise<{
         items: {
-            data: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[K]; } | { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[string];
+            data: { [K in keyof { [Key in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key], true>; }]: { [Key_1 in keyof GetSelectTableSelection<T> & string]: SelectResultField<GetSelectTableSelection<T>[Key_1], true>; }[K]; };
             type: T["_"]["name"];
         }[];
         page: number;
