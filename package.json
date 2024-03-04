@@ -1,6 +1,6 @@
 {
 	"name": "@affinity-lab/sapphire-blitz-com",
-	"version": "0.0.10",
+	"version": "0.0.14",
 	"author": "Affinity Lab",
 	"main": "dist/index",
 	"scripts": {
@@ -12,9 +12,9 @@
 		"dist/*"
 	],
 	"dependencies": {
-		"@affinity-lab/affinity-util": "github:affinity-lab/affinity-util",
-		"@affinity-lab/blitz": "github:affinity-lab/blitz",
-		"@affinity-lab/x-com": "github:affinity-lab/x-com",
+		"@affinity-lab/blitz": "^0.0.44",
+		"@affinity-lab/util": "^1.0.2",
+		"@affinity-lab/x-com": "^0.0.28",
 		"drizzle-orm": "^0.29.0",
 		"express": "^4.18.2",
 		"glob": "^10.3.10",

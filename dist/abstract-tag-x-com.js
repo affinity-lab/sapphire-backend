@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbstractTagXCom = void 0;
 const x_com_1 = require("@affinity-lab/x-com");
-const affinity_util_1 = require("@affinity-lab/affinity-util");
+const util_1 = require("@affinity-lab/util");
 class AbstractTagXCom {
     repository;
     async create(args) {
@@ -20,7 +20,7 @@ class AbstractTagXCom {
     }
     async modify(args) {
         if (args.name === undefined || args.newName === undefined)
-            throw new affinity_util_1.ExtendedError("Gimmi names man", "", undefined, 400);
+            throw new util_1.ExtendedError("Gimmi names man", "", undefined, 400);
         if (args.name.trim() !== args.newName.trim())
             await this.repository.renameTag(args.name, args.newName);
         if (args.predefined !== undefined)

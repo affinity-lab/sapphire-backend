@@ -3,7 +3,7 @@ import {Collection, MySqlRepository} from "@affinity-lab/blitz";
 import {Column, getTableName} from "drizzle-orm";
 import Path from "path";
 import {ZodObject} from "zod";
-import {ExtendedError, TmpFile} from "@affinity-lab/affinity-util";
+import {ExtendedError, TmpFile} from "@affinity-lab/util";
 
 export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 	protected type: string;

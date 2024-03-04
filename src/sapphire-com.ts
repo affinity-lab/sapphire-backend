@@ -3,7 +3,7 @@ import {IList} from "./list";
 import {AuthResolver} from "./interfaces";
 import {Command, Files} from "@affinity-lab/x-com";
 import {Request} from "express";
-import {ExtendedError, TmpFile} from "@affinity-lab/affinity-util";
+import {ExtendedError, TmpFile} from "@affinity-lab/util";
 
 export type Role = string | Array<string>
 export type Roles = {read: Role, create: Role, update: Role, delete: Role}

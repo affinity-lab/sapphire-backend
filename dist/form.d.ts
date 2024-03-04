@@ -1,7 +1,7 @@
 import { MySqlTableWithColumns } from "drizzle-orm/mysql-core";
 import { MySqlRepository } from "@affinity-lab/blitz";
 import { ZodObject } from "zod";
-import { TmpFile } from "@affinity-lab/affinity-util";
+import { TmpFile } from "@affinity-lab/util";
 export declare abstract class IForm<I extends MySqlTableWithColumns<any> = any> {
     schema: I;
     protected repository: MySqlRepository;

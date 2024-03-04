@@ -1,6 +1,6 @@
 import {Command} from "@affinity-lab/x-com";
 import {AbstractTagRepository} from "@affinity-lab/blitz";
-import {ExtendedError} from "@affinity-lab/affinity-util";
+import {ExtendedError} from "@affinity-lab/util";
 
 
 export class AbstractTagXCom {

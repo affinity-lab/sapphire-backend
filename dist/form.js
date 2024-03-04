@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IForm = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const path_1 = __importDefault(require("path"));
-const affinity_util_1 = require("@affinity-lab/affinity-util");
+const util_1 = require("@affinity-lab/util");
 class IForm {
     schema;
     repository;
@@ -26,7 +26,7 @@ class IForm {
         if (this.validator) {
             const parsed = this.validator.safeParse(values);
             if (!parsed.success)
-                throw new affinity_util_1.ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues, 400);
+                throw new util_1.ExtendedError("Validation extended-error", "VALIDATION_ERROR", parsed.error.issues, 400);
             values = parsed.data;
         }
         return id ? this.update(id, values) : this.insert(values);
@@ -51,7 +51,7 @@ class IForm {
     async form(id, values) {
         let item = await this.getItem(id, values);
         if (item === undefined)
-            throw new affinity_util_1.ExtendedError("Bad ID", "");
+            throw new util_1.ExtendedError("Bad ID", "");
         return item;
     }
     async save(id, values) { return this.saveItem(id, values); }
