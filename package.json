@@ -1,6 +1,6 @@
 {
 	"name": "@affinity-lab/sapphire-blitz-com",
-	"version": "0.0.14",
+	"version": "0.0.15",
 	"author": "Affinity Lab",
 	"main": "dist/index",
 	"scripts": {
