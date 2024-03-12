@@ -27,7 +27,7 @@ class IList {
         let items = [];
         let type = (0, drizzle_orm_1.getTableName)(this.schema);
         for (let item of res)
-            items.push({ data: this.export(item), type });
+            items.push({ data: await this.export(item), type });
         return { items, page: pageIndex, count: c };
     }
     select(where, count = false) {
@@ -101,7 +101,7 @@ class IList {
         let orderSQLs = [];
         for (let o of this.orders[name])
             orderSQLs.push(o.reverse ? (0, drizzle_orm_1.desc)(o.by) : (0, drizzle_orm_1.asc)(o.by));
-        return base.orderBy(...orderSQLs);
+        return base.orderBy(...orderSQLs) || base;
     }
     get orders() {
         return {};

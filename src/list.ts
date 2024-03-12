@@ -35,7 +35,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		const res = await select.execute();
 		let items = [];
 		let type = getTableName(this.schema);
-		for (let item of res) items.push({data: this.export(item), type});
+		for (let item of res) items.push({data: await this.export(item), type});
 		return {items, page: pageIndex, count: c}
 	}
 
@@ -109,11 +109,11 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name)) return null;
 		let orderSQLs: Array<SQL> = [];
 		for (let o of this.orders[name]) orderSQLs.push(o.reverse ? desc(o.by) : asc(o.by));
-		return base.orderBy(...orderSQLs);
+		return base.orderBy(...orderSQLs) || base;
 	}
 
 	protected get orders(): Orders {
-		return {}
+		return {};
 	}
 
 }
