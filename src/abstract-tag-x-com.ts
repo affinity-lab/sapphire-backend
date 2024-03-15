@@ -1,25 +1,10 @@
 import {Command} from "@affinity-lab/x-com";
-import {AbstractTagRepository} from "@affinity-lab/blitz";
-import {ExtendedError, MaybeArray} from "@affinity-lab/util";
-import {AuthResolver} from "./interfaces";
+import {ExtendedError} from "@affinity-lab/util";
 import {Request} from "express";
+import {ITagXCom} from "./tag-x-com-interface";
 
 
-export class AbstractTagXCom {
-	protected repository: AbstractTagRepository
-	constructor(
-		protected authResolver?: AuthResolver<any>,
-		protected roles?: MaybeArray<string>
-	) {}
-
-	protected async hasRole(req: Request): Promise<boolean> {
-		if(!this.authResolver || !this.roles) return true;
-		let r: Array<string>;
-		if (typeof this.roles === "string") r = [this.roles];
-		else r = this.roles;
-		return this.authResolver.hasRole(req, r);
-	}
-
+export class AbstractTagXCom extends ITagXCom{
 	@Command("create")
 	async create(args: { name: string }, req: Request): Promise<boolean> {
 		if(!(await this.hasRole(req))) throw new ExtendedError("UNAUTHORIZED", "", undefined, 403);

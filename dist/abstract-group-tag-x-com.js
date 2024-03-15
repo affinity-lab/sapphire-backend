@@ -9,63 +9,61 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AbstractTagXCom = void 0;
+exports.AbstractGroupTagXCom = void 0;
+const tag_x_com_interface_1 = require("./tag-x-com-interface");
 const x_com_1 = require("@affinity-lab/x-com");
 const util_1 = require("@affinity-lab/util");
-const tag_x_com_interface_1 = require("./tag-x-com-interface");
-class AbstractTagXCom extends tag_x_com_interface_1.ITagXCom {
+class AbstractGroupTagXCom extends tag_x_com_interface_1.ITagXCom {
+    groupIdFunc;
     async create(args, req) {
-        if (!(await this.hasRole(req)))
-            throw new util_1.ExtendedError("UNAUTHORIZED", "", undefined, 403);
-        await this.repository.createTag(args.name);
+        let id = await this.groupIdFunc(req);
+        await this.repository.createTag(args.name, id);
         return true;
     }
     async modify(args, req) {
-        if (!(await this.hasRole(req)))
-            throw new util_1.ExtendedError("UNAUTHORIZED", "", undefined, 403);
         if (args.name === undefined || args.newName === undefined)
             throw new util_1.ExtendedError("Gimmi names man", "", undefined, 400);
+        let id = await this.groupIdFunc(req);
         if (args.name.trim() !== args.newName.trim())
-            await this.repository.renameTag(args.name, args.newName);
+            await this.repository.renameTag(args.name, args.newName, id);
         if (args.predefined !== undefined)
-            await this.repository.changePredefinedTag(args.newName, args.predefined);
+            await this.repository.changePredefinedTag(args.newName, args.predefined, id);
         return true;
     }
     async delete(args, req) {
-        if (!(await this.hasRole(req)))
-            throw new util_1.ExtendedError("UNAUTHORIZED", "", undefined, 403);
-        await this.repository.deleteTag(args.name);
+        let id = await this.groupIdFunc(req);
+        await this.repository.deleteTag(args.name, id);
         return true;
     }
     async get(args, req) {
-        if (!(await this.hasRole(req)))
-            throw new util_1.ExtendedError("UNAUTHORIZED", "", undefined, 403);
-        return this.repository.getTags();
+        let id = await this.groupIdFunc(req);
+        return this.repository.getTags(id);
     }
 }
-exports.AbstractTagXCom = AbstractTagXCom;
+exports.AbstractGroupTagXCom = AbstractGroupTagXCom;
 __decorate([
     (0, x_com_1.Command)("create"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], AbstractTagXCom.prototype, "create", null);
+], AbstractGroupTagXCom.prototype, "create", null);
 __decorate([
     (0, x_com_1.Command)("modify"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], AbstractTagXCom.prototype, "modify", null);
+], AbstractGroupTagXCom.prototype, "modify", null);
 __decorate([
     (0, x_com_1.Command)("delete"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], AbstractTagXCom.prototype, "delete", null);
+], AbstractGroupTagXCom.prototype, "delete", null);
 __decorate([
     (0, x_com_1.Command)("get"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], AbstractTagXCom.prototype, "get", null);
-//# sourceMappingURL=abstract-tag-x-com.js.map
+], AbstractGroupTagXCom.prototype, "get", null);
+// groupId?: (req: Request) => MaybePromise<number>
+//# sourceMappingURL=abstract-group-tag-x-com.js.map

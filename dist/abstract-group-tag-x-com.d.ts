@@ -1,6 +1,8 @@
-import { Request } from "express";
 import { ITagXCom } from "./tag-x-com-interface";
-export declare class AbstractTagXCom extends ITagXCom {
+import { Request } from "express";
+import { MaybePromise } from "@affinity-lab/util";
+export declare class AbstractGroupTagXCom extends ITagXCom {
+    protected groupIdFunc: (req: Request) => MaybePromise<number>;
     create(args: {
         name: string;
     }, req: Request): Promise<boolean>;
@@ -12,8 +14,5 @@ export declare class AbstractTagXCom extends ITagXCom {
     delete(args: {
         name: string;
     }, req: Request): Promise<boolean>;
-    get(args: {}, req: Request): Promise<Array<{
-        name: string;
-        predefined: boolean;
-    }>>;
+    get(args: {}, req: Request): Promise<Array<any>>;
 }

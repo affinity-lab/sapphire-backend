@@ -16,9 +16,9 @@ class IList {
         return item;
     }
     async page(reqPageIndex, pageSize, search, order, filter) {
-        let w = this.where(search, filter);
+        let w = await this.where(search, filter);
         let select = this.select(w);
-        select = this.orderBy(select, order);
+        select = await this.orderBy(select, order);
         let c = await this.count(w);
         let pageIndex = this.calcPageIndex(reqPageIndex, pageSize, c);
         if (pageSize)
@@ -59,17 +59,17 @@ class IList {
     pagination(base, pageIndex, pageSize) {
         return base.limit(pageSize).offset(pageIndex * pageSize);
     }
-    where(search, filter) {
-        const f = [this.defaultFilter(), this.composeFilter(filter), this.quickSearchFilter(search)].filter(filters => !!filters);
+    async where(search, filter) {
+        const f = [await this.defaultFilter(), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
         return (0, drizzle_orm_1.and)(...f);
     }
-    defaultFilter() {
+    async defaultFilter() {
         return undefined;
     }
-    composeFilter(args) {
+    async composeFilter(args) {
         return undefined;
     }
-    quickSearchFilter(key) {
+    async quickSearchFilter(key) {
         if (typeof key === "undefined" || key.trim().length === 0)
             return (0, drizzle_orm_1.or)();
         let likes = [];
@@ -93,7 +93,7 @@ class IList {
         let q = this.select(where, true).prepare();
         return (await q.execute())[0].amount;
     }
-    orderBy(base, name) {
+    async orderBy(base, name) {
         if (!name)
             name = Object.keys(this.orders)[0];
         if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name))

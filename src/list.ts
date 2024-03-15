@@ -26,9 +26,9 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	}
 
 	public async page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>) {
-		let w = this.where(search, filter)
+		let w = await this.where(search, filter)
 		let select = this.select(w);
-		select = this.orderBy(select, order);
+		select = await this.orderBy(select, order);
 		let c = await this.count(w);
 		let pageIndex = this.calcPageIndex(reqPageIndex, pageSize, c);
 		if (pageSize) select = this.pagination(select, pageIndex, pageSize);
@@ -69,20 +69,20 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		return base.limit(pageSize).offset(pageIndex * pageSize)
 	}
 
-	private where(search?: string, filter?: Record<string, any>): SQL | undefined {
-		const f: Array<Filter> = [this.defaultFilter(), this.composeFilter(filter), this.quickSearchFilter(search)].filter(filters => !!filters);
+	private async where(search?: string, filter?: Record<string, any>): Promise<SQL | undefined> {
+		const f: Array<Filter> = [await this.defaultFilter(), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
 		return and(...f);
 	}
 
-	protected defaultFilter(): Filter {
+	protected async defaultFilter(): Promise<Filter> {
 		return undefined;
 	}
 
-	protected composeFilter(args: Record<string, any> | undefined): Filter {
+	protected async composeFilter(args?: Record<string, any> | undefined): Promise<Filter> {
 		return undefined;
 	}
 
-	protected quickSearchFilter(key?: string): Filter {
+	protected async quickSearchFilter(key?: string): Promise<Filter> {
 		if (typeof key === "undefined" || key.trim().length === 0) return or()!;
 		let likes: Array<SQL> = [];
 		for (let col of Array.isArray(this.quickSearchFields) ? this.quickSearchFields : [this.quickSearchFields]) {
@@ -104,7 +104,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		return (await q.execute())[0].amount
 	}
 
-	protected orderBy(base: BaseSelect, name: string | undefined): BaseSelect {
+	protected async orderBy(base: BaseSelect, name: string | undefined): Promise<BaseSelect> {
 		if (!name) name = Object.keys(this.orders)[0];
 		if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name)) return null;
 		let orderSQLs: Array<SQL> = [];

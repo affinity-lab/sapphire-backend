@@ -19,4 +19,6 @@ __exportStar(require("./form"), exports);
 __exportStar(require("./list"), exports);
 __exportStar(require("./sapphire-com"), exports);
 __exportStar(require("./abstract-tag-x-com"), exports);
+__exportStar(require("./abstract-group-tag-x-com"), exports);
+__exportStar(require("./tag-x-com-interface"), exports);
 //# sourceMappingURL=index.js.map

@@ -42,12 +42,12 @@ export declare class IList<T extends MySqlTableWithColumns<any> = any, S extends
     private join;
     private pagination;
     private where;
-    protected defaultFilter(): Filter;
-    protected composeFilter(args: Record<string, any> | undefined): Filter;
-    protected quickSearchFilter(key?: string): Filter;
+    protected defaultFilter(): Promise<Filter>;
+    protected composeFilter(args?: Record<string, any> | undefined): Promise<Filter>;
+    protected quickSearchFilter(key?: string): Promise<Filter>;
     private calcPageIndex;
     private count;
-    protected orderBy(base: BaseSelect, name: string | undefined): BaseSelect;
+    protected orderBy(base: BaseSelect, name: string | undefined): Promise<BaseSelect>;
     protected get orders(): Orders;
 }
 export {};
