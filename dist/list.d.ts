@@ -43,11 +43,11 @@ export declare class IList<T extends MySqlTableWithColumns<any> = any, S extends
     private pagination;
     private where;
     protected defaultFilter(): Promise<Filter>;
-    protected composeFilter(args?: Record<string, any> | undefined): Promise<Filter>;
+    protected composeFilter(args: Record<string, any> | undefined): Promise<Filter>;
     protected quickSearchFilter(key?: string): Promise<Filter>;
     private calcPageIndex;
     private count;
-    protected orderBy(base: BaseSelect, name: string | undefined): Promise<BaseSelect>;
+    protected orderBy(base: BaseSelect, name: string | undefined): BaseSelect;
     protected get orders(): Orders;
 }
 export {};

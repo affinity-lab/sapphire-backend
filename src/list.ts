@@ -28,7 +28,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	public async page(reqPageIndex: number, pageSize: number, search?: string, order?: string, filter?: Record<string, any>) {
 		let w = await this.where(search, filter)
 		let select = this.select(w);
-		select = await this.orderBy(select, order);
+		select = this.orderBy(select, order);
 		let c = await this.count(w);
 		let pageIndex = this.calcPageIndex(reqPageIndex, pageSize, c);
 		if (pageSize) select = this.pagination(select, pageIndex, pageSize);
@@ -78,7 +78,7 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		return undefined;
 	}
 
-	protected async composeFilter(args?: Record<string, any> | undefined): Promise<Filter> {
+	protected async composeFilter(args: Record<string, any> | undefined): Promise<Filter> {
 		return undefined;
 	}
 
@@ -104,12 +104,13 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 		return (await q.execute())[0].amount
 	}
 
-	protected async orderBy(base: BaseSelect, name: string | undefined): Promise<BaseSelect> {
+	protected orderBy(base: BaseSelect, name: string | undefined): BaseSelect {
+		// THIS FUNCTION CANNOT BE ASYNC !!!!!!!!!!!!!!!!!!!!
 		if (!name) name = Object.keys(this.orders)[0];
-		if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name)) return null;
+		if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name)) return base;
 		let orderSQLs: Array<SQL> = [];
 		for (let o of this.orders[name]) orderSQLs.push(o.reverse ? desc(o.by) : asc(o.by));
-		return base.orderBy(...orderSQLs) || base;
+		return base.orderBy(...orderSQLs);
 	}
 
 	protected get orders(): Orders {

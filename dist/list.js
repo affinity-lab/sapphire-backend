@@ -18,7 +18,7 @@ class IList {
     async page(reqPageIndex, pageSize, search, order, filter) {
         let w = await this.where(search, filter);
         let select = this.select(w);
-        select = await this.orderBy(select, order);
+        select = this.orderBy(select, order);
         let c = await this.count(w);
         let pageIndex = this.calcPageIndex(reqPageIndex, pageSize, c);
         if (pageSize)
@@ -93,15 +93,16 @@ class IList {
         let q = this.select(where, true).prepare();
         return (await q.execute())[0].amount;
     }
-    async orderBy(base, name) {
+    orderBy(base, name) {
+        // THIS FUNCTION CANNOT BE ASYNC !!!!!!!!!!!!!!!!!!!!
         if (!name)
             name = Object.keys(this.orders)[0];
         if (Object.keys(this.orders).length === 0 || !Object.keys(this.orders).includes(name))
-            return null;
+            return base;
         let orderSQLs = [];
         for (let o of this.orders[name])
             orderSQLs.push(o.reverse ? (0, drizzle_orm_1.desc)(o.by) : (0, drizzle_orm_1.asc)(o.by));
-        return base.orderBy(...orderSQLs) || base;
+        return base.orderBy(...orderSQLs);
     }
     get orders() {
         return {};

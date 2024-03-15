@@ -16,7 +16,7 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 	}
 
 	public async getItem(id: number | null, values?: Record<string, any>): Promise<Record<string, any> | undefined> {
-		return id ? await this.export(this.repository.get(id)) : await this.newItem(values) ;
+		return id ? await this.export(this.repository.get(id), values) : await this.newItem(values) ;
 	}
 
 	protected async saveItem(id: number | null, values: Record<string, any>) {
@@ -37,7 +37,7 @@ export abstract class IForm<I extends MySqlTableWithColumns<any> = any>{
 		}
 		return values;
 	}
-	protected async export(item: any) {return item;}
+	protected async export(item: any, values?: Record<string, any>) {return item;}
 	protected abstract newItem(values?: Record<string, any>): Promise<{type: string, data: Partial<I> & Record<string, any>}>;
 	public async insert(values: Record<string, any>): Promise<number | undefined> {
 		return await this.repository.insert(values);

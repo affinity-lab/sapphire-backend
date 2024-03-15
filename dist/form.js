@@ -19,7 +19,7 @@ class IForm {
         this.type = (0, drizzle_orm_1.getTableName)(this.schema);
     }
     async getItem(id, values) {
-        return id ? await this.export(this.repository.get(id)) : await this.newItem(values);
+        return id ? await this.export(this.repository.get(id), values) : await this.newItem(values);
     }
     async saveItem(id, values) {
         values = await this.import(id, values);
@@ -40,7 +40,7 @@ class IForm {
         }
         return values;
     }
-    async export(item) { return item; }
+    async export(item, values) { return item; }
     async insert(values) {
         return await this.repository.insert(values);
     }
