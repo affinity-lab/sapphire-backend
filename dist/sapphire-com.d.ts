@@ -45,7 +45,7 @@ export declare class SapphireCom {
     }, req: Request): Promise<number | undefined>;
     delete(args: {
         id: number;
-    }, req: Request): Promise<void>;
+    }, req: Request): Promise<boolean>;
     file(args: {
         id: string;
         collectionName: string;

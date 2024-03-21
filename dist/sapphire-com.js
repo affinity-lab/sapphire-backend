@@ -57,7 +57,8 @@ class SapphireCom {
     async delete(args, req) {
         if (!(await this.authResolver.hasRole(req, this.getRole("delete"))))
             throw new util_1.ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN", undefined, 403);
-        return this.formAdapter.delete(args.id);
+        await this.formAdapter.delete(args.id);
+        return true;
     }
     async file(args, req, { files }) {
         if (!(await this.authResolver.hasRole(req, this.getRole("update"))))

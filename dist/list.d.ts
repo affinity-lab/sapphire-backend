@@ -42,7 +42,7 @@ export declare class IList<T extends MySqlTableWithColumns<any> = any, S extends
     private join;
     private pagination;
     private where;
-    protected defaultFilter(): Promise<Filter>;
+    protected defaultFilter(args: Record<string, any> | undefined): Promise<Filter>;
     protected composeFilter(args: Record<string, any> | undefined): Promise<Filter>;
     protected quickSearchFilter(key?: string): Promise<Filter>;
     private calcPageIndex;

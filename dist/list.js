@@ -60,10 +60,10 @@ class IList {
         return base.limit(pageSize).offset(pageIndex * pageSize);
     }
     async where(search, filter) {
-        const f = [await this.defaultFilter(), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
+        const f = [await this.defaultFilter(filter), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
         return (0, drizzle_orm_1.and)(...f);
     }
-    async defaultFilter() {
+    async defaultFilter(args) {
         return undefined;
     }
     async composeFilter(args) {

@@ -47,9 +47,10 @@ export class SapphireCom {
 	}
 
 	@Command()
-	async delete(args: {id: number}, req: Request): Promise<void> {
+	async delete(args: {id: number}, req: Request): Promise<boolean> {
 		if(!(await this.authResolver.hasRole(req, this.getRole("delete")))) throw new ExtendedError("UNAUTHORIZED to delete from", "FORBIDDEN", undefined, 403);
-		return this.formAdapter.delete(args.id);
+		await this.formAdapter.delete(args.id);
+		return true;
 	}
 
 	@Command()

@@ -70,11 +70,11 @@ export class IList<T extends MySqlTableWithColumns<any> = any, S extends Record<
 	}
 
 	private async where(search?: string, filter?: Record<string, any>): Promise<SQL | undefined> {
-		const f: Array<Filter> = [await this.defaultFilter(), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
+		const f: Array<Filter> = [await this.defaultFilter(filter), await this.composeFilter(filter), await this.quickSearchFilter(search)].filter(filters => !!filters);
 		return and(...f);
 	}
 
-	protected async defaultFilter(): Promise<Filter> {
+	protected async defaultFilter(args: Record<string, any> | undefined): Promise<Filter> {
 		return undefined;
 	}
 
